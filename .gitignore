@@ -1,0 +1,28 @@
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Java / Maven
+**/target/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+**/build/
+coverage/
+
+# Platform-specific Flutter scaffolding
+**/android/.gradle/
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/ios/Pods/
+**/ios/.symlinks/
+**/macos/Pods/
+
+# Environment files
+.env
+.env.*
