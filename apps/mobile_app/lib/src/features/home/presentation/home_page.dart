@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'details_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -8,9 +9,7 @@ class HomePage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('doit'),
-      ),
+      appBar: AppBar(title: const Text('doit')),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -40,6 +39,23 @@ class HomePage extends StatelessWidget {
               title: 'contracts',
               description: 'Shared API contract and integration rules',
             ),
+            const SizedBox(height: 32), // Відступ перед кнопкою
+            // ДОДАЄМО КНОПКУ:
+            Center(
+              child: FilledButton.icon(
+                icon: const Icon(Icons.arrow_forward), // Іконка стрілочки
+                label: const Text('Перейти на деталі'), // Текст на кнопці
+                onPressed: () {
+                  // ЦЕЙ БЛОК ВИКЛИКАЄТЬСЯ ПРИ НАЖАТТІ
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const DetailsPage(), // Наш новий екран
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -48,10 +64,7 @@ class HomePage extends StatelessWidget {
 }
 
 class _AreaCard extends StatelessWidget {
-  const _AreaCard({
-    required this.title,
-    required this.description,
-  });
+  const _AreaCard({required this.title, required this.description});
 
   final String title;
   final String description;
@@ -59,10 +72,7 @@ class _AreaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        title: Text(title),
-        subtitle: Text(description),
-      ),
+      child: ListTile(title: Text(title), subtitle: Text(description)),
     );
   }
 }
