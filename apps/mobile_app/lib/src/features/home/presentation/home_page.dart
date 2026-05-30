@@ -44,7 +44,9 @@ class HomePage extends StatelessWidget {
             Center(
               child: FilledButton.icon(
                 icon: const Icon(Icons.arrow_forward), // Іконка стрілочки
-                label: const Text('Перейти на деталі'), // Текст на кнопці
+                label: const Text(
+                  'Перейти на другу стоірнку',
+                ), // Текст на кнопці
                 onPressed: () {
                   // ЦЕЙ БЛОК ВИКЛИКАЄТЬСЯ ПРИ НАЖАТТІ
                   Navigator.of(context).push(
