@@ -1,6 +1,29 @@
 spring:
   application:
     name: api-server
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:file:./.data/api-server/doit-auth;AUTO_SERVER=TRUE}
+    driver-class-name: org.h2.Driver
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8443}
+  ssl:
+    enabled: true
+    key-store: ${SERVER_SSL_KEY_STORE:classpath:tls/dev-keystore.p12}
+    key-store-password: ${SERVER_SSL_KEY_STORE_PASSWORD:doit-dev}
+    key-store-type: ${SERVER_SSL_KEY_STORE_TYPE:PKCS12}
+    key-alias: ${SERVER_SSL_KEY_ALIAS:doit-dev}
+
+doit:
+  auth:
+    token-ttl: ${DOIT_AUTH_TOKEN_TTL:PT8H}
+    bootstrap-user:
+      username: ${DOIT_AUTH_USERNAME:demo@doit.local}
+      password: ${DOIT_AUTH_PASSWORD:ChangeMe123!}
+      display-name: ${DOIT_AUTH_DISPLAY_NAME:Demo User}

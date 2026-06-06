@@ -4,7 +4,8 @@ info:
   version: 0.1.0
   description: Shared API contract for the mobile client and Java backend.
 servers:
-  - url: http://localhost:8080
+  - url: https://localhost:8443
+    description: Local development server with a self-signed TLS certificate
 paths:
   /api/v1/health:
     get:
@@ -19,7 +20,112 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+  /api/v1/auth/login:
+    post:
+      tags:
+        - auth
+      summary: Authenticate a user
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: User authenticated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Request payload is incomplete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "401":
+          description: Credentials are invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /api/v1/auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register a new user and issue an access token
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Registration data is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "409":
+          description: User with this email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - auth
+      summary: Revoke the current bearer token
+      operationId: logout
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Token revoked successfully
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /api/v1/users/me:
+    get:
+      tags:
+        - users
+      summary: Get current authenticated user profile
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Authenticated user profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUserResponse"
+        "401":
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque
   schemas:
     HealthResponse:
       type: object
@@ -33,3 +139,94 @@ components:
         status:
           type: string
           example: ok
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: demo@doit.local
+        password:
+          type: string
+          format: password
+          example: ChangeMe123!
+    RegisterRequest:
+      type: object
+      required:
+        - username
+        - password
+        - displayName
+      properties:
+        username:
+          type: string
+          example: new.user@doit.local
+        password:
+          type: string
+          format: password
+          example: SecurePass123!
+        displayName:
+          type: string
+          example: New User
+    AuthResponse:
+      type: object
+      required:
+        - accessToken
+        - expiresAt
+        - userId
+        - username
+        - displayName
+      properties:
+        accessToken:
+          type: string
+          example: qwo2f5fQtp1_KURpwM1kYz7t3q7rqL2tf-vKzTyS-iQ
+        expiresAt:
+          type: string
+          format: date-time
+          example: "2026-06-05T20:00:00Z"
+        userId:
+          type: string
+          format: uuid
+          example: e8b73540-68df-4d46-8b0f-e862969ffb2d
+        username:
+          type: string
+          example: demo@doit.local
+        displayName:
+          type: string
+          example: Demo User
+    CurrentUserResponse:
+      type: object
+      required:
+        - userId
+        - username
+        - displayName
+        - registeredAt
+      properties:
+        userId:
+          type: string
+          format: uuid
+          example: e8b73540-68df-4d46-8b0f-e862969ffb2d
+        username:
+          type: string
+          example: demo@doit.local
+        displayName:
+          type: string
+          example: Demo User
+        registeredAt:
+          type: string
+          format: date-time
+          example: "2026-06-05T12:00:00Z"
+    ProblemDetail:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
